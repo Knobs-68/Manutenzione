@@ -1,17 +1,17 @@
 @echo off
 :: Script per aggiornare Windows, i driver, pulire il disco, ottimizzare la RAM, deframmentare il disco, tweak di sistema e altro
 
+::Carica la tabella caratteri corretta
+chcp 65001
+
 :: Verifica dei privilegi di amministratore
 NET FILE > NUL 2>&1
 if '%errorlevel%' == '0' (
     echo Eseguendo come amministratore... OK
-	timeout /T 2 >nul
 ) else (
 	color 4
-	echo -----------------------------------------------------------
     echo AVVISO: Questo script richiede diritti di amministratore.
     echo Apri il prompt come amministratore e riprova.
-	echo -----------------------------------------------------------
     pause
     exit
 )
@@ -43,11 +43,14 @@ echo 7  - Ottimizza la RAM
 echo 8  - Deframmenta o ottimizza il disco (HDD/SSD)
 echo 9  - Tweak di sistema (ottimizzazione prestazioni, memoria, rete)
 echo 10 - Blocca permanentemente un sito web
-echo 11 - Riavvia il sistema
-echo 12 - Visualizza aiuto di Winget
-echo 13  - Uscita
+echo 11 - Gestione Periferiche
+echo 12 - Gestione Disco
+echo 13 - 
+echo 14 - Riavvia il sistema
+echo 15 - Visualizza aiuto di Winget
+echo 16 - Uscita
 echo -----------------------------------------------------------
-set /p scelta=Seleziona un'opzione [0-11]: 
+set /p scelta=Seleziona un'opzione [0-16] e premi invio: 
 
 :: Seleziona l'opzione del menu
 if "%scelta%"=="0" goto PuntoRipristino
@@ -61,9 +64,12 @@ if "%scelta%"=="7" goto RAM
 if "%scelta%"=="8" goto deframmenta
 if "%scelta%"=="9" goto tweak_sistema
 if "%scelta%"=="10" goto bloccaSito
-if "%scelta%"=="11" goto riavvio
-if "%scelta%"=="12" goto help
-if "%scelta%"=="13" goto end
+if "%scelta%"=="11" goto gestionePC
+if "%scelta%"=="12" goto gestioneDisco
+if "%scelta%"=="13" goto attivazione
+if "%scelta%"=="14" goto riavvio
+if "%scelta%"=="15" goto help
+if "%scelta%"=="16" goto end
 
 :: Se l'input non è valido
 echo Opzione non valida. Riprova.
@@ -112,24 +118,17 @@ goto menu
 
 :: Esegui aggiornamenti con Winget
 :Winget
+color e
 cls
-color 8
 echo -----------------------------------------------------------
 echo Eseguendo aggiornamenti con Winget...
 echo -----------------------------------------------------------
 timeout /T 1 >nul
 winget upgrade --all
 if %ERRORLEVEL%==0 (
-	cls
-	color 8
-	echo -----------------------------------------------------------
     echo Aggiornamento completato con successo.
-	echo -----------------------------------------------------------
 ) else (
-    cls
-	echo -----------------------------------------------------------
-	echo Si è verificato un errore durante l'aggiornamento.
-	echo -----------------------------------------------------------
+    echo Si è verificato un errore durante l'aggiornamento.
 	pause)
 timeout /T 3 >nul
 goto menu
@@ -306,6 +305,29 @@ echo Tweak di sistema applicati con successo.
 timeout /T 5 >nul
 goto menu
 
+:gestionePC
+color 6
+cls
+echo -----------------------------------------------------------
+echo Gestione periferiche del PC...
+echo -----------------------------------------------------------
+timeout /T 1 >nul
+start devmgmt.msc
+timeout /T 3 >nul
+goto menu
+
+:gestioneDisco
+color 6
+cls
+echo -----------------------------------------------------------
+echo Gestione dei dischi del PC...
+echo -----------------------------------------------------------
+timeout /T 1 >nul
+start diskmgmt.msc
+timeout /T 3 >nul
+goto menu
+
+
 :: Riavvia il sistema
 :riavvio
 color e
@@ -316,6 +338,17 @@ echo -----------------------------------------------------------
 timeout /T 1 >nul
 shutdown /r /t 0
 goto end
+
+::Attivazione di Windows 10/11 e Office
+:attivazione
+color b
+cls
+echo -----------------------------------------------------------
+echo 
+echo -----------------------------------------------------------
+
+goto menu
+
 
 :: Blocca l'accesso a un sito specifico, indirizzandolo a 127.0.0.1 nel file HOSTS
 :bloccaSito
